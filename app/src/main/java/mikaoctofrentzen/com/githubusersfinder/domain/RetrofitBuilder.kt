@@ -34,7 +34,6 @@ class RetrofitBuilder {
     class CustomInterceptor : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response {
             val request = chain.request().newBuilder()
-                .addHeader("Authorization", TOKEN)
                 .build()
             return chain.proceed(request)
         }

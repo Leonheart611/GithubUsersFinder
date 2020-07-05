@@ -3,12 +3,14 @@ package mikaoctofrentzen.com.githubusersfinder.ui.main
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView.OnEditorActionListener
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,6 +19,7 @@ import kotlinx.android.synthetic.main.main_fragment.*
 import mikaoctofrentzen.com.githubusersfinder.R
 import mikaoctofrentzen.com.githubusersfinder.ui.main.adapter.UserAdapter
 import mikaoctofrentzen.com.githubusersfinder.util.EventObserver
+import mikaoctofrentzen.com.githubusersfinder.util.checkInternet
 import mikaoctofrentzen.com.githubusersfinder.util.showToast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -59,8 +62,12 @@ class MainFragment : Fragment() {
                     val totalItemCOunt: Int = recyclerView.layoutManager?.itemCount ?: 0
                     val llm = recyclerView.layoutManager as LinearLayoutManager
                     if (llm.findLastCompletelyVisibleItemPosition() == totalItemCOunt - 1 && isAlloaded.not()) {
-                        page++
-                        viewModel.getUsers(query = query, page = page)
+                        if (requireContext().checkInternet()) {
+                            page++
+                            viewModel.getUsers(query = query, page = page)
+                        } else {
+                            context?.showToast(resources.getString(R.string.no_internet_connection))
+                        }
                     }
                 }
             })
@@ -84,23 +91,32 @@ class MainFragment : Fragment() {
         et_github_username.setOnEditorActionListener(OnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 query = et_github_username.text.toString()
-                if (query.isNotEmpty()) {
-                    page = 1
-                    viewModel.getUsers(query = query, page = page)
+                if (requireContext().checkInternet()) {
+                    if (query.isNotEmpty()) {
+                        page = 1
+                        viewModel.getUsers(query = query, page = page)
+                    } else {
+                        et_github_username.setError(resources.getString(R.string.github_user_serach_error))
+                    }
                 } else {
-                    et_github_username.setError(resources.getString(R.string.github_user_serach_error))
+                    context?.showToast(resources.getString(R.string.no_internet_connection))
                 }
+
                 return@OnEditorActionListener true
             }
             false
         })
         btn_find.setOnClickListener {
             query = et_github_username.text.toString()
-            if (query.isNotEmpty()) {
-                page = 1
-                viewModel.getUsers(query = query, page = page)
+            if (requireContext().checkInternet()) {
+                if (query.isNotEmpty()) {
+                    page = 1
+                    viewModel.getUsers(query = query, page = page)
+                } else {
+                    et_github_username.setError(resources.getString(R.string.github_user_serach_error))
+                }
             } else {
-                et_github_username.setError(resources.getString(R.string.github_user_serach_error))
+                context?.showToast(resources.getString(R.string.no_internet_connection))
             }
         }
     }
@@ -136,6 +152,4 @@ class MainFragment : Fragment() {
         else
             loadingDialog.dismiss()
     }
-
-
 }
