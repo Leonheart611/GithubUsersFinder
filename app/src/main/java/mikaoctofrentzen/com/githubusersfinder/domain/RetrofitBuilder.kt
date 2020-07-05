@@ -7,12 +7,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-object RetrofitBuilder {
+class RetrofitBuilder {
     private var retrofit: Retrofit? = null
-    const val BASE_URL = "https://api.github.com/search/"
-    const val TOKEN = "ebe75d7179327453898dbb3c877e0f22f37a31d0"
-
-    fun getClient(): API {
+    fun getAPI(): API {
         if (retrofit == null) {
             val client = OkHttpClient.Builder()
                 .addInterceptor(CustomInterceptor())
@@ -36,6 +33,11 @@ object RetrofitBuilder {
                 .build()
             return chain.proceed(request)
         }
+    }
+
+    companion object {
+        const val BASE_URL = "https://api.github.com/search/"
+        const val TOKEN = "ebe75d7179327453898dbb3c877e0f22f37a31d0"
     }
 }
 

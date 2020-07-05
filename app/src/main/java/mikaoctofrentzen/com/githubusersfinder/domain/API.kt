@@ -11,5 +11,5 @@ interface API {
         @Query("q") query: String,
         @Query("per_page") per_page: Int = 20,
         @Query("page") page: Int
-    ): Response<GithubUserResponse>
+    ): GithubUserResponse
 }
