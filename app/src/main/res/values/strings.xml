@@ -3,4 +3,5 @@
     <string name="github_user_search_hint">Search Username</string>
     <string name="btn_text_find">Find</string>
     <string name="github_user_serach_error">Please input username</string>
+    <string name="empty_result_title">Pencarian yang anda cari tidak ditemukan</string>
 </resources>

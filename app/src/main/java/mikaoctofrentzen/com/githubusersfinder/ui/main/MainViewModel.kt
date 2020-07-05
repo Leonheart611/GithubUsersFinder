@@ -20,25 +20,34 @@ class MainViewModel(private val userRepository: UserRepository) : ViewModel() {
     private val _userResultLiveData by lazy { MutableLiveData<MutableList<Users>>() }
     val userResultLiveData: LiveData<MutableList<Users>> by lazy { _userResultLiveData }
 
-    val showEmptyResult = MutableLiveData<Event<Boolean>>()
+    val showEmptyResult = MutableLiveData<Event<Boolean>>(Event(false))
+    val userAllloaded = MutableLiveData<Event<Boolean>>(Event(false))
+    val errorMessage = MutableLiveData<Event<String>>()
+    val showLoading = MutableLiveData<Event<Boolean>>(Event(false))
 
 
-    fun getUsers(query: String = "Leonheart611", page: Int = 1) {
+    fun getUsers(query: String, page: Int) {
         try {
+            showLoading.postValue(Event(true))
             uiScope.launch {
                 val result = userRepository.getUsers(query = query, page = page)
                 if (result.users.isNullOrEmpty().not()) {
                     _userResultLiveData.postValue(result.users.toMutableList())
-                    Log.e("Result Success", result.users.toString())
+                    showEmptyResult.postValue(Event(false))
+                    showLoading.postValue(Event(false))
                 } else {
                     if (page == 1) {
                         showEmptyResult.postValue(Event(true))
+                        showLoading.postValue(Event(false))
+                    } else {
+                        userAllloaded.postValue(Event(true))
+                        showLoading.postValue(Event(false))
                     }
                 }
             }
         } catch (e: Exception) {
-            e.stackTrace
-            Log.e("Fail get Users", e.toString())
+            errorMessage.postValue(Event(e.localizedMessage))
+            showLoading.postValue(Event(false))
         }
 
     }

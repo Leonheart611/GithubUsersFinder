@@ -1,7 +1,7 @@
 package mikaoctofrentzen.com.githubusersfinder
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import mikaoctofrentzen.com.githubusersfinder.ui.main.MainFragment
 
 class MainActivity : AppCompatActivity() {
